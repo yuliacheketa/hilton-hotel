@@ -18,9 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         auth = FirebaseAuth.getInstance()
-
 
         binding.btnRegister.setOnClickListener {
             registerUser()
@@ -37,6 +35,8 @@ class MainActivity : AppCompatActivity() {
         val email = binding.etEmail.text.toString().trim()
         val password = binding.etPassword.text.toString().trim()
         val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+        val lettersCount = password.count { it.isLetter() }
+
 
         when {
             name.isEmpty() -> showError("Введіть ім'я")
@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
             password.isEmpty() -> showError("Введіть пароль")
             password != confirmPassword -> showError("Паролі не збігаються")
             password.length < 6 -> showError("Пароль має бути від 6 символів")
+            lettersCount < 2 -> showError("Пароль має містити щонайменше 2 літери")
             else -> {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->

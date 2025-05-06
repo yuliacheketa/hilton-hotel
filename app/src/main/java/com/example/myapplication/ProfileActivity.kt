@@ -1,8 +1,8 @@
 package com.example.myapplication
 
-
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.LoginActivity
@@ -29,16 +29,34 @@ class ProfileActivity : AppCompatActivity() {
         if (currentUser != null) {
             val userId = currentUser.uid
 
-
             db.collection("users").document(userId).get()
                 .addOnSuccessListener { document ->
                     val name = document.getString("name") ?: "Користувач"
+                    val role = document.getString("role") ?: "user"
+
                     binding.tvWelcome.text = "Вітаємо, $name!"
+
+
+                    if (role == "admin") {
+                        binding.tvAdminLabel.visibility = View.VISIBLE
+                    } else {
+                        binding.tvAdminLabel.visibility = View.GONE
+                    }
                 }
                 .addOnFailureListener {
                     binding.tvWelcome.text = "Вітаємо!"
                     Toast.makeText(this, "Не вдалося отримати ім’я", Toast.LENGTH_SHORT).show()
                 }
+        }
+
+        binding.btnHistory.setOnClickListener {
+            val intent = Intent(this, BookingHistoryActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.btnBook.setOnClickListener {
+            val intent = Intent(this, RoomsActivity::class.java)
+            startActivity(intent)
         }
 
         binding.btnLogout.setOnClickListener {
